@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"time"
+
 	"github.com/ant0ine/go-json-rest/rest"
 
 	"github.com/tidepool-org/platform/log"
@@ -27,6 +29,27 @@ type Details interface {
 
 	IsServer() bool
 	UserID() string
+}
+
+type Use struct {
+	OAuth *struct {
+		Provider string `json:"provider,omitempty"`
+	} `json:"oauth,omitempty"`
+}
+
+type RestrictedTokenRequest struct {
+	Use      Use  `json:"use,omitempty"`
+	Duration *int `json:"duration,omitempty"`
+}
+
+type RestrictedToken struct {
+	Use            Use       `json:"use,omitempty" bson:"use,omitempty"`
+	ExpirationTime time.Time `json:"duration,omitempty" bson:"duration,omitempty"`
+
+	CreatedTime    time.Time `json:"createdTime,omitempty" bson:"createdTime,omitempty"`
+	CreatedUserID  string    `json:"createdUserID,omitempty" bson:"createdUserID,omitempty"`
+	ModifiedTime   time.Time `json:"modifiedTime,omitempty" bson:"modifiedTime,omitempty"`
+	ModifiedUserID string    `json:"modifiedUserID,omitempty" bson:"modifiedUserID,omitempty"`
 }
 
 type Status struct {

@@ -1,6 +1,7 @@
 package store
 
 import (
+	"github.com/tidepool-org/platform/auth"
 	"github.com/tidepool-org/platform/log"
 	"github.com/tidepool-org/platform/store"
 )
@@ -8,9 +9,13 @@ import (
 type Store interface {
 	store.Store
 
-	NewAuthsSession(lgr log.Logger) AuthsSession
+	NewRestrictedTokensSession(log log.Logger) RestrictedTokensSession
 }
 
-type AuthsSession interface {
+type RestrictedTokensSession interface {
 	store.Session
+
+	Create(restrictedToken *auth.RestrictedTokenRequest) (*auth.RestrictedToken, error)
+	Get(id string) (*auth.RestrictedToken, error)
+	Delete(id string) error
 }

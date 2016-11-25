@@ -91,11 +91,11 @@ var _ = Describe("Context", func() {
 		})
 
 		Context("with store session", func() {
-			var ssn *testStore.AuthsSession
+			var ssn *testStore.RestrictedTokensSession
 
 			BeforeEach(func() {
-				ssn = testStore.NewAuthsSession()
-				svc.AuthStoreImpl.NewAuthsSessionOutputs = []store.AuthsSession{ssn}
+				ssn = testStore.NewRestrictedTokensSession()
+				svc.AuthStoreImpl.NewRestrictedTokensSessionOutputs = []store.RestrictedTokensSession{ssn}
 			})
 
 			AfterEach(func() {
@@ -104,15 +104,15 @@ var _ = Describe("Context", func() {
 
 			Context("Close", func() {
 				It("returns successfully", func() {
-					Expect(ctx.AuthsSession()).To(Equal(ssn))
+					Expect(ctx.RestrictedTokensSession()).To(Equal(ssn))
 					ctx.Close()
 					Expect(ssn.CloseInvocations).To(Equal(1))
 				})
 			})
 
-			Context("AuthsSession", func() {
+			Context("RestrictedTokensSession", func() {
 				It("returns successfully", func() {
-					Expect(ctx.AuthsSession()).To(Equal(ssn))
+					Expect(ctx.RestrictedTokensSession()).To(Equal(ssn))
 					Expect(ssn.SetAgentInvocations).To(Equal(1))
 				})
 			})

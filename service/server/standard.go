@@ -49,8 +49,10 @@ func (s *Standard) Serve() error {
 
 	var err error
 	if s.config.TLS {
+		s.logger.Debugf("Serving HTTPS on %s", s.config.Address)
 		err = server.ListenAndServeTLS(s.config.TLSCertificateFile, s.config.TLSKeyFile)
 	} else {
+		s.logger.Debugf("Serving HTTP on %s", s.config.Address)
 		err = server.ListenAndServe()
 	}
 	return err

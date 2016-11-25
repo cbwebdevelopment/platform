@@ -16,7 +16,7 @@ import (
 var _ = Describe("Mongo", func() {
 	var cfg *storeMongo.Config
 	var str *mongo.Store
-	var ssn store.AuthsSession
+	var ssn store.RestrictedTokensSession
 
 	BeforeEach(func() {
 		cfg = &storeMongo.Config{
@@ -60,15 +60,15 @@ var _ = Describe("Mongo", func() {
 			Expect(str).ToNot(BeNil())
 		})
 
-		Context("NewAuthsSession", func() {
+		Context("NewRestrictedTokensSession", func() {
 			It("returns a new session if no logger specified", func() {
-				ssn = str.NewAuthsSession(nil)
+				ssn = str.NewRestrictedTokensSession(nil)
 				Expect(ssn).ToNot(BeNil())
 				Expect(ssn.Logger()).ToNot(BeNil())
 			})
 
 			It("returns a new session if logger specified", func() {
-				ssn = str.NewAuthsSession(nullLog.NewLogger())
+				ssn = str.NewRestrictedTokensSession(nullLog.NewLogger())
 				Expect(ssn).ToNot(BeNil())
 				Expect(ssn.Logger()).ToNot(BeNil())
 			})

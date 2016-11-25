@@ -15,6 +15,7 @@ import (
 	baseMongo "github.com/tidepool-org/platform/store/mongo"
 	userClient "github.com/tidepool-org/platform/user/client"
 	"github.com/tidepool-org/platform/user/service/api"
+	"github.com/tidepool-org/platform/user/service/api/oauth/acme"
 	"github.com/tidepool-org/platform/user/service/api/v1"
 	userMongo "github.com/tidepool-org/platform/user/store/mongo"
 )
@@ -316,9 +317,13 @@ func (s *Standard) initializeAPI() error {
 		return errors.Wrap(err, "service", "unable to initialize api middleware")
 	}
 
+	s.Logger().Debug("Initializing api routes")
+
+	routes := append(acme.Routes(), v1.Routes()...)
+
 	s.Logger().Debug("Initializing api router")
 
-	if err = s.api.DEPRECATEDInitializeRouter(v1.Routes()); err != nil {
+	if err = s.api.DEPRECATEDInitializeRouter(routes); err != nil {
 		return errors.Wrap(err, "service", "unable to initialize api router")
 	}
 

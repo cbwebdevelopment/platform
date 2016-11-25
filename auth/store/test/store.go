@@ -8,9 +8,9 @@ import (
 
 type Store struct {
 	*testStore.Store
-	NewAuthsSessionInvocations int
-	NewAuthsSessionInputs      []log.Logger
-	NewAuthsSessionOutputs     []store.AuthsSession
+	NewRestrictedTokensSessionInvocations int
+	NewRestrictedTokensSessionInputs      []log.Logger
+	NewRestrictedTokensSessionOutputs     []store.RestrictedTokensSession
 }
 
 func NewStore() *Store {
@@ -19,20 +19,20 @@ func NewStore() *Store {
 	}
 }
 
-func (s *Store) NewAuthsSession(lgr log.Logger) store.AuthsSession {
-	s.NewAuthsSessionInvocations++
+func (s *Store) NewRestrictedTokensSession(lgr log.Logger) store.RestrictedTokensSession {
+	s.NewRestrictedTokensSessionInvocations++
 
-	s.NewAuthsSessionInputs = append(s.NewAuthsSessionInputs, lgr)
+	s.NewRestrictedTokensSessionInputs = append(s.NewRestrictedTokensSessionInputs, lgr)
 
-	if len(s.NewAuthsSessionOutputs) == 0 {
-		panic("Unexpected invocation of NewAuthsSession on Store")
+	if len(s.NewRestrictedTokensSessionOutputs) == 0 {
+		panic("Unexpected invocation of NewRestrictedTokensSession on Store")
 	}
 
-	output := s.NewAuthsSessionOutputs[0]
-	s.NewAuthsSessionOutputs = s.NewAuthsSessionOutputs[1:]
+	output := s.NewRestrictedTokensSessionOutputs[0]
+	s.NewRestrictedTokensSessionOutputs = s.NewRestrictedTokensSessionOutputs[1:]
 	return output
 }
 
 func (s *Store) UnusedOutputsCount() int {
-	return len(s.NewAuthsSessionOutputs)
+	return len(s.NewRestrictedTokensSessionOutputs)
 }

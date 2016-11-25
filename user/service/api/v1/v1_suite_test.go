@@ -1,11 +1,12 @@
 package v1_test
 
 import (
-	"github.com/ant0ine/go-json-rest/rest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	"testing"
+
+	"github.com/ant0ine/go-json-rest/rest"
 
 	"github.com/tidepool-org/platform/auth"
 	testAuth "github.com/tidepool-org/platform/auth/test"

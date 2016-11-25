@@ -24,3 +24,22 @@ func NewRouter(svc service.Service) (*Router, error) {
 func (r *Router) Routes() []*rest.Route {
 	return []*rest.Route{}
 }
+
+/*
+POST /v1/users/:userid/notifications
+	request includes info about type of notification
+	web:
+		message:
+		template?:
+	email?:
+	sms?:
+	push?:
+
+GET /v1/users/:userid/notifications
+
+DELETE /v1/notifications/:notificationid
+
+How to mark as dismissed?
+Do we want to retain after dismissed for tracking purposes?
+Or add to audit log?
+*/
