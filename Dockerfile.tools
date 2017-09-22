@@ -4,7 +4,7 @@ FROM golang:1.7.1-alpine
 ENV TIDEPOOL_ENV="local" \
     TIDEPOOL_CONFIG_DIRECTORY="$GOPATH/src/github.com/tidepool-org/platform/_config" \
     TIDEPOOL_USERSERVICES_CLIENT_SERVERTOKENSECRET="This needs to be the same secret everywhere. YaHut75NsK1f9UKUXuWqxNN0RUwHFBCy" \
-    BUILD=userservices
+    BUILD=tools
 
 WORKDIR ${GOPATH}/src/github.com/tidepool-org/platform
 
@@ -14,4 +14,6 @@ RUN apk --no-cache add git make \
 
 COPY . ${GOPATH}/src/github.com/tidepool-org/platform
 
-CMD ["sh", "-c", "CompileDaemon -build='./docker_build.userservices.sh' -exclude-dir=dataservices -exclude-dir=tools -command='./_bin/userservices/userservices' -graceful-kill=true"]
+RUN sed -i -e 's/localhost/styx/' tools/tapi/cmd/cmd.go
+
+CMD ["sh", "-c", "CompileDaemon -build='./docker_build.tools.sh' -exclude-dir=userservices -exclude-dir=dataservices"]
