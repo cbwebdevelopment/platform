@@ -22,6 +22,12 @@ type User struct {
 	ProfileID *string `json:"-" bson:"-"`
 }
 
+type UserCreate struct {
+	User
+	Password string `json:"password,omitempty" bson:"-"`
+	FullName string `json:"fullname" bson:"-"`
+}
+
 type IDHash struct {
 	ID   string `json:"id"`
 	Hash string `json:"hash"`

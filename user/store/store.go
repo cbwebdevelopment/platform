@@ -18,6 +18,7 @@ type Session interface {
 	GetUserByID(userID string) (*user.User, error)
 	DeleteUser(user *user.User) error
 	DestroyUserByID(userID string) error
+	CreateUser(user *user.UserCreate) (*user.User, error)
 
 	PasswordMatches(user *user.User, password string) bool
 }

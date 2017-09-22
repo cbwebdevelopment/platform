@@ -13,6 +13,7 @@ const (
 	UserIDFlag   = "user-id"
 	EmailFlag    = "email"
 	PasswordFlag = "password"
+	UsernameFlag = "fullname"
 	RoleFlag     = "role"
 )
 
@@ -97,6 +98,26 @@ func UserCommands() cli.Commands {
 					),
 					Before: ensureNoArgs,
 					Action: userDelete,
+				},
+				{
+					Name:  "create",
+					Usage: "create a user",
+					Flags: CommandFlags(
+						cli.StringFlag{
+							Name:  EmailFlag,
+							Usage: "`EMAIL` of the user to create",
+						},
+						cli.StringFlag{
+							Name:  PasswordFlag,
+							Usage: "`PASSWORD` of the user to create",
+						},
+						cli.StringFlag{
+							Name:  UsernameFlag,
+							Usage: "`FULLNAME` of the user to create",
+						},
+					),
+					Before: ensureNoArgs,
+					Action: userCreate,
 				},
 			},
 		},
@@ -194,4 +215,16 @@ func userDelete(c *cli.Context) error {
 	}
 
 	return reportMessage(c, "User deleted.")
+}
+
+func userCreate(c *cli.Context) error {
+	email := c.String(EmailFlag)
+	password := c.String(PasswordFlag)
+	username := c.String(UsernameFlag)
+
+	if err := API(c).CreateUser(email, password, username); err != nil {
+		return err
+	}
+
+	return reportMessage(c, "User Created.")
 }

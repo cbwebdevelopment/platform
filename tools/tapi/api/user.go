@@ -167,6 +167,25 @@ func (a *API) DeleteUserByID(userID string, password string) error {
 		responseFuncs{a.expectStatusCode(http.StatusOK)}))
 }
 
+func (a *API) CreateUser(email string, password string, username string) error {
+	userCreate := &user.UserCreate{}
+	if password != "" {
+		userCreate.Password = *&password
+	}
+
+	if email != "" {
+		userCreate.Email = *&email
+	}
+
+	if username != "" {
+		userCreate.FullName = *&username
+	}
+
+	return a.asEmpty(a.request("POST", a.joinPaths("userservices", "v1", "users"),
+		requestFuncs{a.addSessionToken(), a.addObjectBody(userCreate)},
+		responseFuncs{a.expectStatusCode(http.StatusOK)}))
+}
+
 func (a *API) asUser(responseBody io.Reader, err error) (*user.User, error) {
 	responseString, err := a.asString(responseBody, err)
 	if err != nil {

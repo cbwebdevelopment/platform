@@ -1,8 +1,12 @@
 package mongo
 
 import (
+	"crypto/rand"
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
+	"math/big"
+	"strconv"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -122,6 +126,52 @@ func (s *Session) DeleteUser(user *user.User) error {
 	return nil
 }
 
+func (s *Session) CreateUser(details *user.UserCreate) (*user.User, error) {
+	if details == nil {
+		return nil, errors.New("mongo", "user is missing")
+	}
+	if details.Email == "" {
+		return nil, errors.New("mongo", "user email is missing")
+	}
+	if details.Password == "" {
+		return nil, errors.New("mongo", "user password is missing")
+	}
+	if details.Emails == nil {
+		details.Emails = append(details.Emails, details.Email)
+	}
+
+	var newUser = &user.User{Email: details.Email, Emails: details.Emails, Roles: details.Roles}
+
+	var err error
+
+	if newUser.ID, err = s.generateUniqueHash([]string{newUser.Email, details.Password}, 10); err != nil {
+		return nil, errors.New("hash", "error generating id")
+	}
+	if newUser.Hash, err = s.generateUniqueHash([]string{newUser.Email, details.Password, newUser.ID}, 24); err != nil {
+		return nil, errors.New("hash", "error generating hash")
+	}
+
+	newUser.PasswordHash = s.HashPassword(newUser.ID, details.Password)
+	newUser.EmailVerified = true
+
+	if s.IsClosed() {
+		return nil, errors.New("mongo", "session closed")
+	}
+
+	startTime := time.Now()
+
+	err = s.C().Insert(newUser)
+
+	createdUser, err := s.GetUserByID(newUser.ID)
+	loggerFields := log.Fields{"userId": createdUser.ID, "duration": time.Since(startTime) / time.Microsecond}
+	s.Logger().WithFields(loggerFields).WithError(err).Debug("CreateUser")
+
+	if err != nil {
+		return nil, errors.Wrap(err, "mongo", "unable to create user")
+	}
+	return createdUser, nil
+}
+
 func (s *Session) DestroyUserByID(userID string) error {
 	if userID == "" {
 		return errors.New("mongo", "user id is missing")
@@ -164,4 +214,29 @@ func (s *Session) HashPassword(userID string, password string) string {
 	hash.Write([]byte(s.config.PasswordSalt))
 	hash.Write([]byte(userID))
 	return hex.EncodeToString(hash.Sum(nil))
+}
+
+func (s *Session) generateUniqueHash(strings []string, length int) (string, error) {
+	if len(strings) > 0 && length > 0 {
+		hash := sha256.New()
+
+		for i := range strings {
+			hash.Write([]byte(strings[i]))
+		}
+
+		max := big.NewInt(9999999999)
+		//add some randomness
+		n, err := rand.Int(rand.Reader, max)
+
+		if err != nil {
+			return "", err
+		}
+		hash.Write([]byte(n.String()))
+		//and use unix nano
+		hash.Write([]byte(strconv.FormatInt(time.Now().UnixNano(), 10)))
+		hashString := hex.EncodeToString(hash.Sum(nil))
+		return string([]rune(hashString)[0:length]), nil
+	}
+
+	return "", errors.New("hash", "both strings and length are required")
 }
