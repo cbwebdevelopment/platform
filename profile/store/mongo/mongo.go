@@ -87,6 +87,34 @@ func (s *Session) GetProfileByID(profileID string) (*profile.Profile, error) {
 	return profile, nil
 }
 
+func (s *Session) CreateProfile(details *profile.Profile) (*profile.Profile, error) {
+	if details == nil {
+		return nil, errors.New("mongo", "profile is missing")
+	}
+	if details.UserID == "" {
+		return nil, errors.New("mongo", "user ID is missing")
+	}
+
+	var err error
+
+	if s.IsClosed() {
+		return nil, errors.New("mongo", "session closed")
+	}
+
+	startTime := time.Now()
+
+	err = s.C().Insert(details)
+
+	loggerFields := log.Fields{"userId": details.UserID, "duration": time.Since(startTime) / time.Microsecond}
+	s.Logger().WithFields(loggerFields).WithError(err).Debug("CreateProfile")
+
+	if err != nil {
+		return nil, errors.Wrap(err, "mongo", "unable to create profile")
+	}
+
+	return details, nil
+}
+
 func (s *Session) DestroyProfileByID(profileID string) error {
 	if profileID == "" {
 		return errors.New("mongo", "profile id is missing")

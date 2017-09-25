@@ -25,7 +25,7 @@ type User struct {
 type UserCreate struct {
 	User
 	Password string `json:"password,omitempty" bson:"-"`
-	FullName string `json:"fullname" bson:"-"`
+	FullName string `json:"fullName,omitempty" bson:"-"`
 }
 
 type IDHash struct {

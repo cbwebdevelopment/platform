@@ -167,7 +167,7 @@ func (a *API) DeleteUserByID(userID string, password string) error {
 		responseFuncs{a.expectStatusCode(http.StatusOK)}))
 }
 
-func (a *API) CreateUser(email string, password string, username string) error {
+func (a *API) CreateUser(email string, password string, fullname string) error {
 	userCreate := &user.UserCreate{}
 	if password != "" {
 		userCreate.Password = *&password
@@ -177,8 +177,8 @@ func (a *API) CreateUser(email string, password string, username string) error {
 		userCreate.Email = *&email
 	}
 
-	if username != "" {
-		userCreate.FullName = *&username
+	if fullname != "" {
+		userCreate.FullName = *&fullname
 	}
 
 	return a.asEmpty(a.request("POST", a.joinPaths("userservices", "v1", "users"),

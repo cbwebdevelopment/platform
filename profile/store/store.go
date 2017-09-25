@@ -16,5 +16,6 @@ type Session interface {
 	store.Session
 
 	GetProfileByID(profileID string) (*profile.Profile, error)
+	CreateProfile(profile *profile.Profile) (*profile.Profile, error)
 	DestroyProfileByID(profileID string) error
 }

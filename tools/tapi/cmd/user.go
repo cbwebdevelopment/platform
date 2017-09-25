@@ -13,7 +13,7 @@ const (
 	UserIDFlag   = "user-id"
 	EmailFlag    = "email"
 	PasswordFlag = "password"
-	UsernameFlag = "fullname"
+	FullNameFlag = "fullName"
 	RoleFlag     = "role"
 )
 
@@ -112,7 +112,7 @@ func UserCommands() cli.Commands {
 							Usage: "`PASSWORD` of the user to create",
 						},
 						cli.StringFlag{
-							Name:  UsernameFlag,
+							Name:  FullNameFlag,
 							Usage: "`FULLNAME` of the user to create",
 						},
 					),
@@ -220,9 +220,9 @@ func userDelete(c *cli.Context) error {
 func userCreate(c *cli.Context) error {
 	email := c.String(EmailFlag)
 	password := c.String(PasswordFlag)
-	username := c.String(UsernameFlag)
+	fullname := c.String(FullNameFlag)
 
-	if err := API(c).CreateUser(email, password, username); err != nil {
+	if err := API(c).CreateUser(email, password, fullname); err != nil {
 		return err
 	}
 

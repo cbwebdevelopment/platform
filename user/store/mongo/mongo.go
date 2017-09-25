@@ -140,7 +140,11 @@ func (s *Session) CreateUser(details *user.UserCreate) (*user.User, error) {
 		details.Emails = append(details.Emails, details.Email)
 	}
 
-	var newUser = &user.User{Email: details.Email, Emails: details.Emails, Roles: details.Roles}
+	var newUser = &user.User{
+		Email:  details.Email,
+		Emails: details.Emails,
+		Roles:  details.Roles,
+	}
 
 	var err error
 
@@ -153,6 +157,7 @@ func (s *Session) CreateUser(details *user.UserCreate) (*user.User, error) {
 
 	newUser.PasswordHash = s.HashPassword(newUser.ID, details.Password)
 	newUser.EmailVerified = true
+	newUser.TermsAcceptedTime = time.Now().Format(time.RFC3339) // TODO: see what format I should use
 
 	if s.IsClosed() {
 		return nil, errors.New("mongo", "session closed")
