@@ -16,7 +16,7 @@ var EnvironmentEndpointMap = map[string]string{
 	"int":   "https://int-api.tidepool.org",
 	"stg":   "https://stg-api.tidepool.org",
 	"dev":   "https://dev-api.tidepool.org",
-	"local": "http://localhost:8009",
+	"local": "http://styx:8009",
 }
 
 var _API *api.API
