@@ -9,6 +9,7 @@ ENV TIDEPOOL_ENV="local" \
 WORKDIR ${GOPATH}/src/github.com/tidepool-org/platform
 
 RUN apk --no-cache add git make \
+ && apk add --update findutils \
  && go get github.com/githubnemo/CompileDaemon \
  && rm -rf .git .gitignore
 
